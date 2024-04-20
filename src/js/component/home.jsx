@@ -1,24 +1,56 @@
-import React from "react";
+import React, { useState } from "react";
 
 //include images into your bundle
 import rigoImage from "../../img/rigo-baby.jpg";
 
 //create your first component
 const Home = () => {
+	const [newTodo, setNewTodo] = useState("")
+	const [todos, setTodos] = useState("")
+
+	const handleClick = () => {
+		return(
+			setTodos([...todos, newTodo])
+		)
+	}
+
+	const deleteTask = (index) => {
+		const listaNueva = todos.filter((todo, i) => i !== index)
+		setTodos(listaNueva)
+	}
+
+	const handleChange = (event) => {
+		return(
+			setNewTodo(event.target.value)
+		)
+	}
+
 	return (
 		<div className="text-center">
-			<h1 className="text-center mt-5">Hello Rigo!</h1>
-			<p>
-				<img src={rigoImage} />
-			</p>
-			<a href="#" className="btn btn-success">
-				If you see this green button... bootstrap is working...
-			</a>
-			<p>
-				Made by{" "}
-				<a href="http://www.4geeksacademy.com">4Geeks Academy</a>, with
-				love!
-			</p>
+			<h1 className="text-center mt-5">Todo list!</h1>
+			<div className="container">
+				<input type="text" className="form-control" onChange={handleChange} />
+				<button 
+				type="button" 
+				className="btn btn-success"
+				onClick={handleClick}
+				>
+				Agregar tarea</button>
+			
+				<ul>
+					{todos.map((todo) => {
+						return(
+							<li>
+								{todo} <button 
+								type="button" 
+								className="btn btn-danger"
+								onClick={deleteTask}
+								>Borrar</button>
+							</li>
+						)
+					})}
+				</ul>
+			</div>
 		</div>
 	);
 };
