@@ -8,7 +8,7 @@ const Home = () => {
   const [inputValue, setInputValue] = useState("");
   const [Todos, setTodos] = useState([]);
 
- 
+  console.log(Todos)
 
   const raw = JSON.stringify(Todos);
 
@@ -25,25 +25,33 @@ const Home = () => {
 //       .catch((error) => console.error(error));
 //   };
 
-  const getTodos = () => {
+const getTodos = () => {
     const myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
-
     const requestOptions = {
-      method: "GET",
-      headers: myHeaders,
-      redirect: "follow",
+        method: "GET",
+        headers: myHeaders,
+        redirect: "follow",
     };
 
-
     fetch("https://playground.4geeks.com/todo/users/marcos", requestOptions)
-      .then((response) => response.json())
-      .then((result) => {
-		console.log(result)
-		setTodos(result.todos);
-	})
-      .catch((error) => console.error(error));
-  };
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error("Error al obtener los datos: " + response.statusText);
+            }
+            return response.json();
+        })
+        .then((result) => {
+            if (result.todos && Array.isArray(result.todos)) {
+                setTodos(result.todos);
+            } else {
+                console.error("El formato de los datos recibidos no es el esperado");
+            }
+        })
+        .catch((error) => {
+            console.error("Error al obtener los datos:", error);
+        });
+	};
 
   	useEffect(() =>{
 		getTodos();
@@ -75,11 +83,11 @@ const Home = () => {
         />
 
         {Todos.map((item, index) => {
-          return (
-            <div className="contenedor">
-              <li key={index}>
+           
+            <div key={index} className="contenedor">
+              <li>
                 {" "}
-                {item}
+                {item.label}
                 <i
                   className="fa-solid fa-trash"
                   onClick={() =>
@@ -90,7 +98,7 @@ const Home = () => {
                 ></i>
               </li>
             </div>
-          );
+          
         })}
       </ul>
       <div className="counter">{Todos.length} tareas</div>
